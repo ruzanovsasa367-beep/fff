@@ -1,429 +1,156 @@
--- Создаем GUI
-local Players = game:GetService("Players")
-local LocalPlayer = Players.LocalPlayer
-local RunService = game:GetService("RunService")
-local UserInputService = game:GetService("UserInputService")
+-- Создать окно UI
+local Window = Library.CreateLib("ESP + Aimbot Menu", "RJTheme3")
 
-local screenGui = Instance.new("ScreenGui")
-screenGui.Parent = game:GetService("CoreGui")
-
--- Основное окно
-local mainFrame = Instance.new("Frame")
-mainFrame.Parent = screenGui
-mainFrame.Size = UDim2.new(0, 400, 0, 400) -- Увеличил высоту для новых настроек
-mainFrame.Position = UDim2.new(0.5, -200, 0.5, -200)
-mainFrame.BackgroundColor3 = Color3.fromRGB(25, 25, 35)
-mainFrame.BackgroundTransparency = 0.15
-mainFrame.BorderSizePixel = 0
-mainFrame.Active = true
-mainFrame.Draggable = false
-
-local mainCorner = Instance.new("UICorner")
-mainCorner.Parent = mainFrame
-mainCorner.CornerRadius = UDim.new(0, 12)
-
--- Панель заголовка для перетаскивания
-local titleBar = Instance.new("Frame")
-titleBar.Parent = mainFrame
-titleBar.Size = UDim2.new(1, 0, 0, 35)
-titleBar.Position = UDim2.new(0, 0, 0, 0)
-titleBar.BackgroundColor3 = Color3.fromRGB(35, 35, 45)
-titleBar.BackgroundTransparency = 0.3
-titleBar.BorderSizePixel = 0
-
-local titleBarCorner = Instance.new("UICorner")
-titleBarCorner.Parent = titleBar
-titleBarCorner.CornerRadius = UDim.new(0, 12)
-
-local title = Instance.new("TextLabel")
-title.Parent = titleBar
-title.Size = UDim2.new(1, 0, 1, 0)
-title.Position = UDim2.new(0, 0, 0, 0)
-title.BackgroundTransparency = 1
-title.Text = "ESP + Aimbot Чит Меню"
-title.TextColor3 = Color3.fromRGB(255, 255, 255)
-title.TextSize = 16
-title.Font = Enum.Font.GothamBold
-
--- Кнопка закрытия
-local closeBtn = Instance.new("TextButton")
-closeBtn.Parent = titleBar
-closeBtn.Size = UDim2.new(0, 30, 1, 0)
-closeBtn.Position = UDim2.new(1, -30, 0, 0)
-closeBtn.BackgroundTransparency = 1
-closeBtn.Text = "✕"
-closeBtn.TextColor3 = Color3.fromRGB(255, 100, 100)
-closeBtn.TextSize = 18
-closeBtn.Font = Enum.Font.GothamBold
-closeBtn.BorderSizePixel = 0
-
--- Левая панель с секциями
-local leftPanel = Instance.new("Frame")
-leftPanel.Parent = mainFrame
-leftPanel.Size = UDim2.new(0, 100, 1, -35)
-leftPanel.Position = UDim2.new(0, 0, 0, 35)
-leftPanel.BackgroundColor3 = Color3.fromRGB(30, 30, 40)
-leftPanel.BackgroundTransparency = 0.2
-leftPanel.BorderSizePixel = 0
-
-local leftCorner = Instance.new("UICorner")
-leftCorner.Parent = leftPanel
-leftCorner.CornerRadius = UDim.new(0, 0)
-
--- Правая панель (контент)
-local rightPanel = Instance.new("Frame")
-rightPanel.Parent = mainFrame
-rightPanel.Size = UDim2.new(1, -100, 1, -35)
-rightPanel.Position = UDim2.new(0, 100, 0, 35)
-rightPanel.BackgroundColor3 = Color3.fromRGB(35, 35, 45)
-rightPanel.BackgroundTransparency = 0.15
-rightPanel.BorderSizePixel = 0
-
-local rightCorner = Instance.new("UICorner")
-rightCorner.Parent = rightPanel
-rightCorner.CornerRadius = UDim.new(0, 0)
-
--- Функция для создания секции
-local function createSection(name, yPosition)
-    local sectionBtn = Instance.new("TextButton")
-    sectionBtn.Parent = leftPanel
-    sectionBtn.Size = UDim2.new(1, 0, 0, 40)
-    sectionBtn.Position = UDim2.new(0, 0, 0, yPosition)
-    sectionBtn.BackgroundColor3 = Color3.fromRGB(45, 45, 55)
-    sectionBtn.BackgroundTransparency = 0.5
-    sectionBtn.Text = name
-    sectionBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
-    sectionBtn.TextSize = 14
-    sectionBtn.Font = Enum.Font.GothamSemibold
-    sectionBtn.BorderSizePixel = 0
-    
-    local sectionCorner = Instance.new("UICorner")
-    sectionCorner.Parent = sectionBtn
-    sectionCorner.CornerRadius = UDim.new(0, 6)
-    
-    return sectionBtn
-end
-
--- Секция Aimbot (сверху)
-local aimbotFrame = Instance.new("Frame")
-aimbotFrame.Parent = rightPanel
-aimbotFrame.Size = UDim2.new(1, -20, 1, -20)
-aimbotFrame.Position = UDim2.new(0, 10, 0, 10)
-aimbotFrame.BackgroundTransparency = 1
-aimbotFrame.Visible = false
-
-local aimbotTitle = Instance.new("TextLabel")
-aimbotTitle.Parent = aimbotFrame
-aimbotTitle.Size = UDim2.new(1, 0, 0, 30)
-aimbotTitle.Position = UDim2.new(0, 0, 0, 0)
-aimbotTitle.BackgroundTransparency = 1
-aimbotTitle.Text = "Настройки Aimbot"
-aimbotTitle.TextColor3 = Color3.fromRGB(255, 255, 255)
-aimbotTitle.TextSize = 18
-aimbotTitle.Font = Enum.Font.GothamBold
-
--- Кнопка включения/выключения Aimbot
-local aimbotToggleBtn = Instance.new("TextButton")
-aimbotToggleBtn.Parent = aimbotFrame
-aimbotToggleBtn.Size = UDim2.new(0, 180, 0, 45)
-aimbotToggleBtn.Position = UDim2.new(0.5, -90, 0, 50)
-aimbotToggleBtn.BackgroundColor3 = Color3.fromRGB(200, 50, 50)
-aimbotToggleBtn.Text = "ВЫКЛЮЧИТЬ AIMBOT"
-aimbotToggleBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
-aimbotToggleBtn.TextSize = 14
-aimbotToggleBtn.Font = Enum.Font.GothamSemibold
-aimbotToggleBtn.BorderSizePixel = 0
-
-local aimbotBtnCorner = Instance.new("UICorner")
-aimbotBtnCorner.Parent = aimbotToggleBtn
-aimbotBtnCorner.CornerRadius = UDim.new(0, 8)
-
--- Настройки Aimbot
-local smoothnessLabel = Instance.new("TextLabel")
-smoothnessLabel.Parent = aimbotFrame
-smoothnessLabel.Size = UDim2.new(0, 150, 0, 30)
-smoothnessLabel.Position = UDim2.new(0, 20, 0, 120)
-smoothnessLabel.BackgroundTransparency = 1
-smoothnessLabel.Text = "Плавность: 5"
-smoothnessLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
-smoothnessLabel.TextSize = 14
-smoothnessLabel.Font = Enum.Font.Gotham
-smoothnessLabel.TextXAlignment = Enum.TextXAlignment.Left
-
-local smoothnessSlider = Instance.new("Frame")
-smoothnessSlider.Parent = aimbotFrame
-smoothnessSlider.Size = UDim2.new(0, 200, 0, 4)
-smoothnessSlider.Position = UDim2.new(0, 20, 0, 155)
-smoothnessSlider.BackgroundColor3 = Color3.fromRGB(80, 80, 100)
-smoothnessSlider.BorderSizePixel = 0
-
-local smoothnessFill = Instance.new("Frame")
-smoothnessFill.Parent = smoothnessSlider
-smoothnessFill.Size = UDim2.new(0.5, 0, 1, 0)
-smoothnessFill.BackgroundColor3 = Color3.fromRGB(0, 150, 255)
-smoothnessFill.BorderSizePixel = 0
-
-local smoothnessSliderCorner = Instance.new("UICorner")
-smoothnessSliderCorner.Parent = smoothnessSlider
-smoothnessSliderCorner.CornerRadius = UDim.new(0, 2)
-
-local fovLabel = Instance.new("TextLabel")
-fovLabel.Parent = aimbotFrame
-fovLabel.Size = UDim2.new(0, 150, 0, 30)
-fovLabel.Position = UDim2.new(0, 20, 0, 180)
-fovLabel.BackgroundTransparency = 1
-fovLabel.Text = "FOV: 100"
-fovLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
-fovLabel.TextSize = 14
-fovLabel.Font = Enum.Font.Gotham
-fovLabel.TextXAlignment = Enum.TextXAlignment.Left
-
-local fovSlider = Instance.new("Frame")
-fovSlider.Parent = aimbotFrame
-fovSlider.Size = UDim2.new(0, 200, 0, 4)
-fovSlider.Position = UDim2.new(0, 20, 0, 215)
-fovSlider.BackgroundColor3 = Color3.fromRGB(80, 80, 100)
-fovSlider.BorderSizePixel = 0
-
-local fovFill = Instance.new("Frame")
-fovFill.Parent = fovSlider
-fovFill.Size = UDim2.new(0.5, 0, 1, 0)
-fovFill.BackgroundColor3 = Color3.fromRGB(0, 150, 255)
-fovFill.BorderSizePixel = 0
-
-local fovSliderCorner = Instance.new("UICorner")
-fovSliderCorner.Parent = fovSlider
-fovSliderCorner.CornerRadius = UDim.new(0, 2)
-
-local hitChanceLabel = Instance.new("TextLabel")
-hitChanceLabel.Parent = aimbotFrame
-hitChanceLabel.Size = UDim2.new(0, 150, 0, 30)
-hitChanceLabel.Position = UDim2.new(0, 20, 0, 240)
-hitChanceLabel.BackgroundTransparency = 1
-hitChanceLabel.Text = "Шанс попадания: 100%"
-hitChanceLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
-hitChanceLabel.TextSize = 14
-hitChanceLabel.Font = Enum.Font.Gotham
-hitChanceLabel.TextXAlignment = Enum.TextXAlignment.Left
-
-local hitChanceSlider = Instance.new("Frame")
-hitChanceSlider.Parent = aimbotFrame
-hitChanceSlider.Size = UDim2.new(0, 200, 0, 4)
-hitChanceSlider.Position = UDim2.new(0, 20, 0, 275)
-hitChanceSlider.BackgroundColor3 = Color3.fromRGB(80, 80, 100)
-hitChanceSlider.BorderSizePixel = 0
-
-local hitChanceFill = Instance.new("Frame")
-hitChanceFill.Parent = hitChanceSlider
-hitChanceFill.Size = UDim2.new(1, 0, 1, 0)
-hitChanceFill.BackgroundColor3 = Color3.fromRGB(0, 150, 255)
-hitChanceFill.BorderSizePixel = 0
-
-local hitChanceSliderCorner = Instance.new("UICorner")
-hitChanceSliderCorner.Parent = hitChanceSlider
-hitChanceSliderCorner.CornerRadius = UDim.new(0, 2)
+-- Вкладка ESP
+local ESPTab = Window:NewTab("ESP")
 
 -- Секция ESP
-local espFrame = Instance.new("Frame")
-espFrame.Parent = rightPanel
-espFrame.Size = UDim2.new(1, -20, 1, -20)
-espFrame.Position = UDim2.new(0, 10, 0, 10)
-espFrame.BackgroundTransparency = 1
-espFrame.Visible = false
+local ESPsection = ESPTab:NewSection("Настройки ESP")
 
-local espTitle = Instance.new("TextLabel")
-espTitle.Parent = espFrame
-espTitle.Size = UDim2.new(1, 0, 0, 30)
-espTitle.Position = UDim2.new(0, 0, 0, 0)
-espTitle.BackgroundTransparency = 1
-espTitle.Text = "Настройки ESP"
-espTitle.TextColor3 = Color3.fromRGB(255, 255, 255)
-espTitle.TextSize = 18
-espTitle.Font = Enum.Font.GothamBold
-
-local toggleBtn = Instance.new("TextButton")
-toggleBtn.Parent = espFrame
-toggleBtn.Size = UDim2.new(0, 180, 0, 45)
-toggleBtn.Position = UDim2.new(0.5, -90, 0, 50)
-toggleBtn.BackgroundColor3 = Color3.fromRGB(200, 50, 50)
-toggleBtn.Text = "ВЫКЛЮЧИТЬ ESP"
-toggleBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
-toggleBtn.TextSize = 14
-toggleBtn.Font = Enum.Font.GothamSemibold
-toggleBtn.BorderSizePixel = 0
-
-local btnCorner = Instance.new("UICorner")
-btnCorner.Parent = toggleBtn
-btnCorner.CornerRadius = UDim.new(0, 8)
-
--- Секция Настройки
-local settingsFrame = Instance.new("Frame")
-settingsFrame.Parent = rightPanel
-settingsFrame.Size = UDim2.new(1, -20, 1, -20)
-settingsFrame.Position = UDim2.new(0, 10, 0, 10)
-settingsFrame.BackgroundTransparency = 1
-settingsFrame.Visible = false
-
-local settingsTitle = Instance.new("TextLabel")
-settingsTitle.Parent = settingsFrame
-settingsTitle.Size = UDim2.new(1, 0, 0, 30)
-settingsTitle.Position = UDim2.new(0, 0, 0, 0)
-settingsTitle.BackgroundTransparency = 1
-settingsTitle.Text = "Настройки"
-settingsTitle.TextColor3 = Color3.fromRGB(255, 255, 255)
-settingsTitle.TextSize = 18
-settingsTitle.Font = Enum.Font.GothamBold
-
-local infoLabel = Instance.new("TextLabel")
-infoLabel.Parent = settingsFrame
-infoLabel.Size = UDim2.new(1, 0, 0, 60)
-infoLabel.Position = UDim2.new(0, 0, 0, 50)
-infoLabel.BackgroundTransparency = 1
-infoLabel.Text = "Здесь будут другие настройки\nСделано с любовью <3"
-infoLabel.TextColor3 = Color3.fromRGB(200, 200, 200)
-infoLabel.TextSize = 14
-infoLabel.Font = Enum.Font.Gotham
-infoLabel.TextYAlignment = Enum.TextYAlignment.Top
-
--- Секция О программе
-local aboutFrame = Instance.new("Frame")
-aboutFrame.Parent = rightPanel
-aboutFrame.Size = UDim2.new(1, -20, 1, -20)
-aboutFrame.Position = UDim2.new(0, 10, 0, 10)
-aboutFrame.BackgroundTransparency = 1
-aboutFrame.Visible = false
-
-local aboutTitle = Instance.new("TextLabel")
-aboutTitle.Parent = aboutFrame
-aboutTitle.Size = UDim2.new(1, 0, 0, 30)
-aboutTitle.Position = UDim2.new(0, 0, 0, 0)
-aboutTitle.BackgroundTransparency = 1
-aboutTitle.Text = "О программе"
-aboutTitle.TextColor3 = Color3.fromRGB(255, 255, 255)
-aboutTitle.TextSize = 18
-aboutTitle.Font = Enum.Font.GothamBold
-
-local aboutText = Instance.new("TextLabel")
-aboutText.Parent = aboutFrame
-aboutText.Size = UDim2.new(1, 0, 0, 160)
-aboutText.Position = UDim2.new(0, 0, 0, 50)
-aboutText.BackgroundTransparency = 1
-aboutText.Text = "ESP + Aimbot Чит Меню v2.0\n\nРазработчик: Ваше Имя\n\nФункции:\n• Подсветка игроков (ESP)\n• Отображение имён\n• Aimbot с настройками\n• Плавность прицеливания\n• Настройка FOV\n• И многое другое..."
-aboutText.TextColor3 = Color3.fromRGB(200, 200, 200)
-aboutText.TextSize = 14
-aboutText.Font = Enum.Font.Gotham
-aboutText.TextYAlignment = Enum.TextYAlignment.Top
-aboutText.TextXAlignment = Enum.TextXAlignment.Left
-
--- Создаем секции (Aimbot теперь сверху)
-local aimbotSection = createSection("Aimbot", 10)
-local espSection = createSection("ESP", 60)
-local settingsSection = createSection("Настройки", 110)
-local aboutSection = createSection("О программе", 160)
-
--- Функция переключения секций
-local function switchToSection(sectionName)
-    aimbotFrame.Visible = (sectionName == "Aimbot")
-    espFrame.Visible = (sectionName == "ESP")
-    settingsFrame.Visible = (sectionName == "Настройки")
-    aboutFrame.Visible = (sectionName == "О программе")
-    
-    -- Обновляем стиль кнопок секций
-    local sections = {aimbotSection, espSection, settingsSection, aboutSection}
-    for _, btn in ipairs(sections) do
-        if (btn == aimbotSection and sectionName == "Aimbot") or
-           (btn == espSection and sectionName == "ESP") or
-           (btn == settingsSection and sectionName == "Настройки") or
-           (btn == aboutSection and sectionName == "О программе") then
-            btn.BackgroundColor3 = Color3.fromRGB(80, 80, 100)
-            btn.BackgroundTransparency = 0.2
-        else
-            btn.BackgroundColor3 = Color3.fromRGB(45, 45, 55)
-            btn.BackgroundTransparency = 0.5
-        end
-    end
-end
-
--- Назначаем обработчики секций
-aimbotSection.MouseButton1Click:Connect(function() switchToSection("Aimbot") end)
-espSection.MouseButton1Click:Connect(function() switchToSection("ESP") end)
-settingsSection.MouseButton1Click:Connect(function() switchToSection("Настройки") end)
-aboutSection.MouseButton1Click:Connect(function() switchToSection("О программе") end)
-
--- Показываем первую секцию (теперь Aimbot)
-switchToSection("Aimbot")
-
--- Закрытие GUI
-closeBtn.MouseButton1Click:Connect(function()
-    screenGui.Enabled = not screenGui.Enabled
-end)
-
--- Перетаскивание GUI
-local dragging = false
-local dragStart = nil
-local startPos = nil
-
-titleBar.InputBegan:Connect(function(input)
-    if input.UserInputType == Enum.UserInputType.MouseButton1 then
-        dragging = true
-        dragStart = input.Position
-        startPos = mainFrame.Position
-        input.Changed:Connect(function()
-            if input.UserInputState == Enum.UserInputState.End then
-                dragging = false
-            end
-        end)
-    end
-end)
-
-UserInputService.InputChanged:Connect(function(input)
-    if dragging and input.UserInputType == Enum.UserInputType.MouseMovement then
-        local delta = input.Position - dragStart
-        mainFrame.Position = UDim2.new(startPos.X.Scale, startPos.X.Offset + delta.X, startPos.Y.Scale, startPos.Y.Offset + delta.Y)
-    end
-end)
-
--- Логика слайдеров
-local function createSliderLogic(sliderFrame, fillFrame, label, minVal, maxVal, callback)
-    local dragging = false
-    
-    local function updateSlider(input)
-        local relativeX = math.clamp((input.Position.X - sliderFrame.AbsolutePosition.X) / sliderFrame.AbsoluteSize.X, 0, 1)
-        fillFrame.Size = UDim2.new(relativeX, 0, 1, 0)
-        local value = math.floor(minVal + (maxVal - minVal) * relativeX)
-        label.Text = label.Text:gsub("%d+", tostring(value)) or label.Text .. " " .. tostring(value)
-        callback(value)
-    end
-    
-    sliderFrame.InputBegan:Connect(function(input)
-        if input.UserInputType == Enum.UserInputType.MouseButton1 then
-            dragging = true
-            updateSlider(input)
-        end
-    end)
-    
-    UserInputService.InputEnded:Connect(function(input)
-        if input.UserInputType == Enum.UserInputType.MouseButton1 then
-            dragging = false
-        end
-    end)
-    
-    UserInputService.InputChanged:Connect(function(input)
-        if dragging and input.UserInputType == Enum.UserInputType.MouseMovement then
-            updateSlider(input)
-        end
-    end)
-end
-
--- ESP логика
+-- Переключатель ESP
 local espEnabled = false
 local espData = {}
 
--- Aimbot переменные
+ESPsection:NewToggle("Включить ESP", "Подсветка игроков и отображение имён", function(state)
+    espEnabled = state
+    if espEnabled then
+        enableESP()
+    else
+        disableESP()
+    end
+end)
+
+-- Настройки цвета ESP
+local colors = {
+    Red = Color3.fromRGB(255, 0, 0),
+    Green = Color3.fromRGB(0, 255, 0),
+    Blue = Color3.fromRGB(0, 0, 255),
+    Yellow = Color3.fromRGB(255, 255, 0),
+    Purple = Color3.fromRGB(255, 0, 255),
+    Cyan = Color3.fromRGB(0, 255, 255),
+    White = Color3.fromRGB(255, 255, 255)
+}
+
+local selectedColor = colors.Red
+
+ESPsection:NewDropdown("Цвет подсветки", "Выберите цвет ESP", {"Red", "Green", "Blue", "Yellow", "Purple", "Cyan", "White"}, function(currentOption)
+    selectedColor = colors[currentOption]
+    if espEnabled then
+        -- Обновляем цвета для всех активных ESP
+        for player, data in pairs(espData) do
+            if data.highlight then
+                data.highlight.FillColor = selectedColor
+            end
+        end
+    end
+end)
+
+-- Прозрачность подсветки
+local fillTransparency = 0.6
+ESPsection:NewSlider("Прозрачность подсветки", "Настройка прозрачности ESP", 100, 0, function(s)
+    fillTransparency = s / 100
+    if espEnabled then
+        for player, data in pairs(espData) do
+            if data.highlight then
+                data.highlight.FillTransparency = fillTransparency
+            end
+        end
+    end
+end)
+
+-- Вкладка Aimbot
+local AimbotTab = Window:NewTab("Aimbot")
+
+-- Секция Aimbot
+local AimbotSection = AimbotTab:NewSection("Настройки Aimbot")
+
+-- Переключатель Aimbot
 local aimbotEnabled = false
-local aimbotSmoothness = 5
-local aimbotFOV = 100
-local aimbotHitChance = 100
+local aimbotSettings = {
+    smoothness = 5,
+    fov = 100,
+    hitChance = 100,
+    targetPart = "Head"
+}
+
+AimbotSection:NewToggle("Включить Aimbot", "Автоматическое прицеливание в противников", function(state)
+    aimbotEnabled = state
+end)
+
+-- Настройка плавности
+AimbotSection:NewSlider("Плавность прицеливания", "Чем выше значение, тем плавнее", 20, 1, function(s)
+    aimbotSettings.smoothness = s
+end)
+
+-- Настройка FOV
+AimbotSection:NewSlider("Радиус FOV", "Зона поиска цели (30-200)", 200, 30, function(s)
+    aimbotSettings.fov = s
+end)
+
+-- Настройка шанса попадания
+AimbotSection:NewSlider("Шанс попадания", "Вероятность попадания в цель (0-100%)", 100, 0, function(s)
+    aimbotSettings.hitChance = s
+end)
+
+-- Выбор части тела
+AimbotSection:NewDropdown("Часть тела для цели", "Куда будет целиться аимбот", {"Head", "Torso", "HumanoidRootPart"}, function(currentOption)
+    aimbotSettings.targetPart = currentOption
+end)
+
+-- Вкладка Настройки
+local SettingsTab = Window:NewTab("Настройки")
+
+-- Секция информации
+local InfoSection = SettingsTab:NewSection("Информация")
+
+InfoSection:NewLabel("ESP + Aimbot Menu v2.0")
+InfoSection:NewLabel("Разработчик: Your Name")
+InfoSection:NewLabel("Функции:")
+InfoSection:NewLabel("• ESP (Подсветка игроков)")
+InfoSection:NewLabel("• Отображение имён над головами")
+InfoSection:NewLabel("• Aimbot с настройками")
+InfoSection:NewLabel("• Настройка цвета и прозрачности")
+InfoSection:NewLabel("• Плавность прицеливания")
+InfoSection:NewLabel("• Регулировка FOV")
+
+-- Кнопка для телепортации
+local TeleportSection = SettingsTab:NewSection("Телепортация")
+
+TeleportSection:NewButton("Телепорт к игроку", "Телепортироваться к выбранному игроку", function()
+    local players = {}
+    for _, player in ipairs(game:GetService("Players"):GetPlayers()) do
+        if player ~= game:GetService("Players").LocalPlayer then
+            table.insert(players, player.Name)
+        end
+    end
+    
+    -- Простой выбор через ввод
+    local playerName = game:GetService("Players").LocalPlayer:GetMouse().Target
+    -- Здесь можно добавить более продвинутый выбор игрока
+    print("Функция телепортации (требует доработки)")
+end)
+
+-- Вкладка О программе
+local AboutTab = Window:NewTab("О программе")
+local AboutSection = AboutTab:NewSection("О программе")
+
+AboutSection:NewLabel("ESP + Aimbot Чит Меню")
+AboutSection:NewLabel("Версия: 2.0")
+AboutSection:NewLabel("")
+AboutSection:NewLabel("Описание:")
+AboutSection:NewLabel("Мощный чит с функциями ESP и Aimbot")
+AboutSection:NewLabel("Поддерживает настройку цветов и прозрачности")
+AboutSection:NewLabel("Aimbot с регулируемой плавностью и FOV")
+AboutSection:NewLabel("")
+AboutSection:NewLabel("Управление:")
+AboutSection:NewLabel("• ВКЛ/ВЫКЛ ESP - вкладка ESP")
+AboutSection:NewLabel("• ВКЛ/ВЫКЛ Aimbot - вкладка Aimbot")
+AboutSection:NewLabel("• Настройки цветов - вкладка ESP")
+
+-- ===== ESP ЛОГИКА =====
+local Players = game:GetService("Players")
+local LocalPlayer = Players.LocalPlayer
+local RunService = game:GetService("RunService")
 
 -- Функция для создания ESP для игрока
 local function addESP(player)
@@ -434,8 +161,8 @@ local function addESP(player)
     
     local highlight = Instance.new("Highlight")
     highlight.Parent = character
-    highlight.FillColor = Color3.fromRGB(255, 0, 0)
-    highlight.FillTransparency = 0.6
+    highlight.FillColor = selectedColor
+    highlight.FillTransparency = fillTransparency
     highlight.OutlineColor = Color3.fromRGB(255, 255, 255)
     highlight.OutlineTransparency = 0.2
     
@@ -458,9 +185,21 @@ local function addESP(player)
         nameLabel.TextStrokeTransparency = 0.3
         nameLabel.TextScaled = true
         
+        local distanceLabel = Instance.new("TextLabel")
+        distanceLabel.Parent = billboard
+        distanceLabel.Size = UDim2.new(1, 0, 0, 20)
+        distanceLabel.Position = UDim2.new(0, 0, 1, 0)
+        distanceLabel.BackgroundTransparency = 1
+        distanceLabel.Text = ""
+        distanceLabel.TextColor3 = Color3.fromRGB(200, 200, 200)
+        distanceLabel.TextSize = 12
+        distanceLabel.Font = Enum.Font.Gotham
+        distanceLabel.TextStrokeTransparency = 0.3
+        
         espData[player] = {
             highlight = highlight,
-            billboard = billboard
+            billboard = billboard,
+            distanceLabel = distanceLabel
         }
     end
 end
@@ -494,77 +233,6 @@ local function disableESP()
     end
 end
 
--- Aimbot функция (простая реализация)
-local function updateAimbot()
-    if not aimbotEnabled then return end
-    
-    local mouse = LocalPlayer:GetMouse()
-    local closestTarget = nil
-    local closestDistance = aimbotFOV
-    
-    for _, player in ipairs(Players:GetPlayers()) do
-        if player ~= LocalPlayer and player.Character and player.Character:FindFirstChild("Head") then
-            local headPos = player.Character.Head.Position
-            local screenPos, onScreen = camera:WorldToViewportPoint(headPos)
-            
-            if onScreen then
-                local distance = (Vector2.new(mouse.X, mouse.Y) - Vector2.new(screenPos.X, screenPos.Y)).Magnitude
-                if distance < closestDistance then
-                    closestDistance = distance
-                    closestTarget = player
-                end
-            end
-        end
-    end
-    
-    if closestTarget and closestTarget.Character and closestTarget.Character:FindFirstChild("Head") then
-        local headPos = closestTarget.Character.Head.Position
-        -- Здесь можно добавить плавное прицеливание
-        -- Для простоты просто перемещаем мышь (в реальном чите нужны другие методы)
-    end
-end
-
--- Настройка слайдеров
-createSliderLogic(smoothnessSlider, smoothnessFill, smoothnessLabel, 1, 20, function(value)
-    aimbotSmoothness = value
-end)
-
-createSliderLogic(fovSlider, fovFill, fovLabel, 30, 200, function(value)
-    aimbotFOV = value
-end)
-
-createSliderLogic(hitChanceSlider, hitChanceFill, hitChanceLabel, 0, 100, function(value)
-    aimbotHitChance = value
-end)
-
--- Обработчик кнопки ESP
-toggleBtn.MouseButton1Click:Connect(function()
-    espEnabled = not espEnabled
-    
-    if espEnabled then
-        toggleBtn.BackgroundColor3 = Color3.fromRGB(50, 200, 50)
-        toggleBtn.Text = "ВКЛЮЧИТЬ ESP"
-        enableESP()
-    else
-        toggleBtn.BackgroundColor3 = Color3.fromRGB(200, 50, 50)
-        toggleBtn.Text = "ВЫКЛЮЧИТЬ ESP"
-        disableESP()
-    end
-end)
-
--- Обработчик кнопки Aimbot
-aimbotToggleBtn.MouseButton1Click:Connect(function()
-    aimbotEnabled = not aimbotEnabled
-    
-    if aimbotEnabled then
-        aimbotToggleBtn.BackgroundColor3 = Color3.fromRGB(50, 200, 50)
-        aimbotToggleBtn.Text = "ВКЛЮЧИТЬ AIMBOT"
-    else
-        aimbotToggleBtn.BackgroundColor3 = Color3.fromRGB(200, 50, 50)
-        aimbotToggleBtn.Text = "ВЫКЛЮЧИТЬ AIMBOT"
-    end
-end)
-
 -- Обработка новых игроков
 Players.PlayerAdded:Connect(function(player)
     player.CharacterAdded:Connect(function()
@@ -590,25 +258,91 @@ LocalPlayer.CharacterAdded:Connect(function()
     end
 end)
 
--- Проверка на исчезновение персонажа
+-- Обновление расстояния и проверка персонажей
 RunService.RenderStepped:Connect(function()
     if espEnabled then
+        local localChar = LocalPlayer.Character
+        local localHRP = localChar and localChar:FindFirstChild("HumanoidRootPart")
+        
         for _, player in ipairs(Players:GetPlayers()) do
             if player ~= LocalPlayer then
                 if player.Character and not espData[player] then
                     addESP(player)
                 elseif not player.Character and espData[player] then
                     removeESP(player)
+                elseif espData[player] and player.Character and localHRP then
+                    -- Обновление расстояния
+                    local charHRP = player.Character:FindFirstChild("HumanoidRootPart")
+                    if charHRP and espData[player].distanceLabel then
+                        local distance = (localHRP.Position - charHRP.Position).Magnitude
+                        local formattedDistance = string.format("%.1f", distance)
+                        espData[player].distanceLabel.Text = formattedDistance .. " м"
+                        
+                        -- Меняем цвет в зависимости от расстояния
+                        if distance < 20 then
+                            espData[player].distanceLabel.TextColor3 = Color3.fromRGB(255, 0, 0)
+                        elseif distance < 50 then
+                            espData[player].distanceLabel.TextColor3 = Color3.fromRGB(255, 255, 0)
+                        else
+                            espData[player].distanceLabel.TextColor3 = Color3.fromRGB(0, 255, 0)
+                        end
+                    end
                 end
             end
         end
     end
 end)
 
--- Aimbot цикл
+-- ===== AIMBOT ЛОГИКА =====
 local camera = workspace.CurrentCamera
+local mouse = LocalPlayer:GetMouse()
+
+-- Функция для получения ближайшего игрока в FOV
+local function getClosestPlayer()
+    if not aimbotEnabled then return nil end
+    
+    local closestPlayer = nil
+    local closestDistance = aimbotSettings.fov
+    local mousePos = Vector2.new(mouse.X, mouse.Y)
+    
+    for _, player in ipairs(Players:GetPlayers()) do
+        if player ~= LocalPlayer and player.Character then
+            local targetPart = player.Character:FindFirstChild(aimbotSettings.targetPart)
+            if targetPart then
+                local screenPos, onScreen = camera:WorldToViewportPoint(targetPart.Position)
+                if onScreen then
+                    local distance = (mousePos - Vector2.new(screenPos.X, screenPos.Y)).Magnitude
+                    if distance < closestDistance then
+                        -- Проверка шанса попадания
+                        if math.random(1, 100) <= aimbotSettings.hitChance then
+                            closestDistance = distance
+                            closestPlayer = player
+                        end
+                    end
+                end
+            end
+        end
+    end
+    
+    return closestPlayer
+end
+
+-- Простая реализация aimbot (для демонстрации)
+-- В реальном чите потребуется более сложная логика
 RunService.RenderStepped:Connect(function()
     if aimbotEnabled then
-        updateAimbot()
+        local target = getClosestPlayer()
+        if target and target.Character then
+            local targetPart = target.Character:FindFirstChild(aimbotSettings.targetPart)
+            if targetPart then
+                -- Здесь можно добавить плавное прицеливание
+                -- Для полной функциональности требуется использование mousemoverel или других методов
+                -- Эта часть требует дополнительной реализации в зависимости от игры
+            end
+        end
     end
 end)
+
+-- Вывод сообщения о загрузке
+print("ESP + Aimbot Menu загружен!")
+print("Используйте UI для настройки функций")
